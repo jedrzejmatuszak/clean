@@ -1,0 +1,4 @@
+<option value="">--empty--</option>
+{% for clean in cleans %}
+<option value="{{ clean.pk }}">{{ clean.name }}</option>
+{% endfor %}
