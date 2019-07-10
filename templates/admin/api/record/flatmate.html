@@ -1,0 +1,4 @@
+<option value="">--empty--</option>
+{% for flatmate in flatmates %}
+<option value="{{ flatmate.pk }}">{{ flatmate }}</option>
+{% endfor %}

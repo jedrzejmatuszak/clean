@@ -1,0 +1,4 @@
+<option value="">--empty--</option>
+{% for room in rooms %}
+<option value="{{ room.pk }}">{{ room.name }}</option>
+{% endfor %}

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Room, Flat, Clean, Record, Flatmate
+from .models import Room, Flat, CleanUp, Record, Flatmate
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -18,10 +18,14 @@ class RoomAdmin(admin.ModelAdmin):
     fields = ('name', 'flat')
 
 
-@admin.register(Clean)
-class CleanAdmin(admin.ModelAdmin):
-    list_display = ('name', 'points', 'room')
+@admin.register(CleanUp)
+class CleanUpAdmin(admin.ModelAdmin):
+    list_display = ('name', 'points', 'room', 'get_flat')
     fields = ('name', 'points', 'room')
+
+    def get_flat(self, obj):
+        return obj.room.flat
+    get_flat.short_description = 'Flat'
 
 
 @admin.register(Flatmate)
@@ -32,9 +36,9 @@ class FlatmateAdmin(admin.ModelAdmin):
 
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
-    list_display = ('flat', 'room', 'clean', 'flatmate', 'date', 'to_date', 'realized', 'points')
-    fields = ('flat', 'room', 'clean', 'flatmate', 'to_date', 'points')
-    readonly_fields = ('points', )
+    list_display = ('flat', 'flatmate', 'room', 'cleanup', 'date', 'to_date', 'realized', 'points')
+    fields = ('flat', 'flatmate', 'room', 'cleanup', 'to_date', 'points', 'realized')
+    # readonly_fields = ('points', )
 
 
 UserAdmin.list_display = ('username', 'email', 'first_name', 'last_name',

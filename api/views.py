@@ -1,18 +1,34 @@
 from django.shortcuts import render
-from .models import Room, Flat, Flatmate, Record, Clean
+from .models import Room, Flat, Flatmate, Record, CleanUp
 # Create your views here.
 
 
 def load_clean(request):
-    room = request.GET.get('room')
-    r = Room.objects.get(name=room)
-    cleans = Clean.objects.filter(room=r)
-    return render(request, '../templates/admin/api/record/dropdown.html', {'cleans': cleans})
+    room_pk = request.GET.get('room_pk')
+    # flat_pk = request.GET.get('flat_pk')
+    # flat = Flat.objects.get(pk=flat_pk)
+    room = Room.objects.get(pk=room_pk)
+    cleans = CleanUp.objects.filter(room=room)
+    return render(request, '../templates/admin/api/record/cleanup.html', {'cleans': cleans})
 
 
 def load_points(request):
-    name = request.GET.get('clean')
-    room = request.GET.get('room')
-    r = Room.objects.get(name=room)
-    clean = Clean.objects.filter(room=r).get(name=name)
+    clean_pk = request.GET.get('clean_pk')
+    room_pk = request.GET.get('room_pk')
+    room = Room.objects.get(pk=room_pk)
+    clean = CleanUp.objects.filter(room=room).get(pk=clean_pk)
     return render(request, '../templates/admin/api/record/points.html', {'clean': clean})
+
+
+def load_rooms(request):
+    pk = request.GET.get('flat_pk')
+    flat = Flat.objects.get(pk=pk)
+    rooms = Room.objects.filter(flat=flat)
+    return render(request, '../templates/admin/api/record/flat.html', {'rooms': rooms})
+
+
+def load_flatmate(request):
+    pk = request.GET.get('flat_pk')
+    flat = Flat.objects.get(pk=pk)
+    flatmates = Flatmate.objects.filter(flat=flat)
+    return render(request, '../templates/admin/api/record/flatmate.html', {'flatmates': flatmates})

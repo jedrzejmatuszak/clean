@@ -48,44 +48,74 @@
     integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
     crossorigin="anonymous"></script>
     <script>
-    $('#id_room').change(function() {
+    $('#id_flat').change(function() {
         for (let child of $(this).children()) {
             if (child.selected) {
-                let room = child.text;
-                let url = '/api/load-clean';
+                let flat_pk = child.value;
+                let url = '/api/load-rooms';
                 $.ajax({
                     url: url,
                     data: {
-                        'room': room
+                        'flat_pk': flat_pk,
                     }
-                }).done(function (data) {
-                    $('#id_clean').html(data)
+                }).done(function(data){
+                    $('#id_room').html(data)
+                });
+                let url2 = '/api/load-flatmate';
+                $.ajax({
+                    url: url2,
+                    data: {
+                        'flat_pk': flat_pk
+                    }
+                }).done(function(data){
+                    $('#id_flatmate').html(data)
                 })
             }
         }
     });
-    $('#id_clean').change(function(){
+    $('#id_room').change(function() {
+        for (let child of $(this).children()) {
+            if (child.selected) {
+                let room_pk = child.value;
+                for (let child of $('#id_flat').children()) {
+                    if (child.selected) {
+                        var flat_pk = child.value
+                    }
+                }
+                let url = '/api/load-clean';
+                $.ajax({
+                    url: url,
+                    data: {
+                        'flat_pk': flat_pk,
+                        'room_pk': room_pk
+                    }
+                }).done(function (data) {
+                    $('#id_cleanup').html(data)
+                })
+            }
+        }
+    });
+    $('#id_cleanup').change(function(){
         for(let item of $(this).children()){
             if (item.selected){
-                let clean = item.text;
+                let clean_pk = item.value;
                 for (let child of $('#id_room').children()) {
                     if (child.selected) {
-                        var room = child.text
+                        var room_pk = child.value
                     }
                 }
                 let url = '/api/load-points';
                 $.ajax({
                     url: url,
                     data: {
-                        'clean': clean,
-                        'room': room
+                        'clean_pk': clean_pk,
+                        'room_pk': room_pk
                     }
                 }).done(function(data){
-                    console.log(data);
-                    $('.readonly').replaceWith(data)
+                    $('#id_points').replaceWith(data)
                 })
             }
         }
-    })
+    });
     </script>
 {% endblock %}

@@ -16,10 +16,10 @@ class Room(models.Model):
     flat = models.ForeignKey(Flat, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.flat.name}'
 
 
-class Clean(models.Model):
+class CleanUp(models.Model):
     name = models.TextField()
     points = models.IntegerField()
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
@@ -42,9 +42,12 @@ class Flatmate(models.Model):
 class Record(models.Model):
     flat = models.ForeignKey(Flat, on_delete=models.CASCADE, null=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True)
-    clean = models.ForeignKey(Clean, on_delete=models.CASCADE, null=True)
+    cleanup = models.ForeignKey(CleanUp, on_delete=models.CASCADE, null=True)
     flatmate = models.ForeignKey(Flatmate, on_delete=models.CASCADE, null=True)
     date = models.DateTimeField(auto_now_add=True, null=True)
     to_date = models.DateField()
     realized = models.BooleanField(default=False)
     points = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.room} - {self.cleanup} - {self.flatmate} - {self.to_date}"
