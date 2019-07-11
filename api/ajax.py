@@ -1,3 +1,7 @@
+from django.shortcuts import render
+from .models import Room, CleanUp, Flat, Flatmate
+
+
 def load_clean(request):
     room_pk = request.GET.get('room_pk')
     # flat_pk = request.GET.get('flat_pk')

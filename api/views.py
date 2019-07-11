@@ -1,8 +1,6 @@
-from django.shortcuts import render
 from .models import Room, Flat, Flatmate, Record, CleanUp
 from .serializers import FlatSerializer, RecordSerializer, FlatmateSerializer, RoomSerializer, CleanUpSerializer
 from rest_framework import generics
-from rest_framework import mixins
 # Create your views here.
 
 
