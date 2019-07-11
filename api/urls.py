@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .ajax import *
 
 urlpatterns = [
     path('load-clean/', load_clean, name='load-clean'),
