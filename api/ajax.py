@@ -4,8 +4,6 @@ from .models import Room, CleanUp, Flat, Flatmate
 
 def load_clean(request):
     room_pk = request.GET.get('room_pk')
-    # flat_pk = request.GET.get('flat_pk')
-    # flat = Flat.objects.get(pk=flat_pk)
     room = Room.objects.get(pk=room_pk)
     cleans = CleanUp.objects.filter(room=room)
     return render(request, '../templates/admin/api/record/cleanup.html', {'cleans': cleans})
