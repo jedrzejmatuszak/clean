@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from .models import Room, Flat, Flatmate, Record, CleanUp
 from .serializers import FlatSerializer, FlatDetailSerializer, RecordSerializer, FlatmateSerializer, \
     FlatmateDetailSerializer, RoomSerializer, RoomDetailSerializer, CleanUpSerializer, CleanUpDetailSerializer, \
-    RecordDetailSerializer
+    RecordDetailSerializer, UserSerializer, UserDetailSerializer
 from rest_framework import generics
 # Create your views here.
 
@@ -84,3 +85,19 @@ class RecordDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Record.objects.all()
     serializer_class = RecordDetailSerializer
+
+
+class UserList(generics.ListCreateAPIView):
+    """
+    List all users or create new user
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    """
+    Retrieve, delete or update a user instance
+    """
+    queryset = User.objects.all()
+    serializer_class = UserDetailSerializer

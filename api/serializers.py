@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Flat, Flatmate, Room, Record, CleanUp
+from .models import Flat, Flatmate, Room, Record, CleanUp, User
 
 
 class FlatSerializer(serializers.ModelSerializer):
@@ -77,3 +77,18 @@ class RecordDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
         fields = '__all__'
+
+
+class UserSerializer(serializers.ModelSerializer):
+    user_detail = serializers.HyperlinkedIdentityField(view_name='user-detail')
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'user_detail']
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        exclude = ['password', ]

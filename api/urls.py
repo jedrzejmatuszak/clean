@@ -17,4 +17,6 @@ urlpatterns = [
     path('cleanup/<int:pk>/', CleanUpDetail.as_view(), name='cleanup-detail'),
     path('record/', RecordList.as_view(), name='record-list'),
     path('record/<int:pk>/', RecordDetail.as_view(), name='record-detail'),
+    path('user/', UserList.as_view(), name='user-list'),
+    path('user/<int:pk>/', UserDetail.as_view(), name='user-detail')
 ]
