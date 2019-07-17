@@ -1,5 +1,3 @@
-import datetime
-
 from rest_framework import serializers
 from .models import Flat, Flatmate, Room, Record, CleanUp
 
@@ -24,14 +22,14 @@ class FlatmateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Flatmate
-        fields = ['id', 'username', 'flat', 'flatmate_details']
+        fields = ['id', 'user', 'flat', 'flatmate_details']
 
 
 class FlatmateDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Flatmate
-        fields = ['id', 'username', 'flat', 'flatmate_records']
+        fields = ['id', 'user', 'flat', 'flatmate_records']
 
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -66,14 +64,15 @@ class CleanUpDetailSerializer(serializers.ModelSerializer):
 
 class RecordSerializer(serializers.ModelSerializer):
     record_details = serializers.HyperlinkedIdentityField(view_name='record-detail')
+    date = serializers.DateTimeField(format='%Y-%m-%d %H:%M')
 
     class Meta:
         model = Record
         fields = ['id', 'flat', 'date', 'to_date', 'realized', 'record_details']
-        #TODO: format date and to_date
 
 
 class RecordDetailSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(format='%Y-%m-%d %H:%M')
 
     class Meta:
         model = Record

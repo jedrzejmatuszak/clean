@@ -29,14 +29,14 @@ class CleanUp(models.Model):
 
 
 class Flatmate(models.Model):
-    username = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     flat = models.ForeignKey(Flat, on_delete=models.SET_NULL, null=True, related_name='flatmates')
 
     def __str__(self):
-        if self.username.first_name != '':
-            return str(self.username.get_full_name())
+        if self.user.first_name != '':
+            return str(self.user.get_full_name())
         else:
-            return self.username.username
+            return self.user.username
 
 
 class Record(models.Model):

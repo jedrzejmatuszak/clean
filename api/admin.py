@@ -30,15 +30,14 @@ class CleanUpAdmin(admin.ModelAdmin):
 
 @admin.register(Flatmate)
 class FlatmateAdmin(admin.ModelAdmin):
-    list_display = ('username', 'flat')
-    fields = ('username', 'flat')
+    list_display = ('user', 'flat')
+    fields = ('user', 'flat')
 
 
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
     list_display = ('flat', 'flatmate', 'room', 'cleanup', 'date', 'to_date', 'realized', 'points')
     fields = ('flat', 'flatmate', 'room', 'cleanup', 'to_date', 'points', 'realized')
-    # readonly_fields = ('points', )
 
 
 UserAdmin.list_display = ('username', 'email', 'first_name', 'last_name',
