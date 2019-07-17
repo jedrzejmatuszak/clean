@@ -1,5 +1,7 @@
 from .models import Room, Flat, Flatmate, Record, CleanUp
-from .serializers import FlatSerializer, RecordSerializer, FlatmateSerializer, RoomSerializer, CleanUpSerializer
+from .serializers import FlatSerializer, FlatDetailSerializer, RecordSerializer, FlatmateSerializer, \
+    FlatmateDetailSerializer, RoomSerializer, RoomDetailSerializer, CleanUpSerializer, CleanUpDetailSerializer, \
+    RecordDetailSerializer
 from rest_framework import generics
 # Create your views here.
 
@@ -17,7 +19,7 @@ class FlatDetail(generics.RetrieveUpdateDestroyAPIView):
     Retrieve, delete or update a flat instance
     """
     queryset = Flat.objects.all()
-    serializer_class = FlatSerializer
+    serializer_class = FlatDetailSerializer
 
 
 class FlatmateList(generics.ListCreateAPIView):
@@ -33,7 +35,7 @@ class FlatmateDetail(generics.RetrieveUpdateDestroyAPIView):
     Retrieve, delete or update a flatmate instance
     """
     queryset = Flatmate.objects.all()
-    serializer_class = FlatmateSerializer
+    serializer_class = FlatmateDetailSerializer
 
 
 class RoomList(generics.ListCreateAPIView):
@@ -49,7 +51,7 @@ class RoomDetail(generics.RetrieveUpdateDestroyAPIView):
     Retrieve, delete or update a room instance
     """
     queryset = Room.objects.all()
-    serializer_class = RoomSerializer
+    serializer_class = RoomDetailSerializer
 
 
 class CleanUpList(generics.ListCreateAPIView):
@@ -65,7 +67,7 @@ class CleanUpDetail(generics.RetrieveUpdateDestroyAPIView):
     Retrieve, delete or update a cleanup instance
     """
     queryset = CleanUp.objects.all()
-    serializer_class = CleanUpSerializer
+    serializer_class = CleanUpDetailSerializer
 
 
 class RecordList(generics.ListCreateAPIView):
@@ -81,4 +83,4 @@ class RecordDetail(generics.RetrieveUpdateDestroyAPIView):
     Retrieve, delete or update a record instance
     """
     queryset = Record.objects.all()
-    serializer_class = RecordSerializer
+    serializer_class = RecordDetailSerializer
