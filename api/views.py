@@ -1,9 +1,14 @@
 from django.contrib.auth.models import User
+from rest_framework.response import Response
 from .models import Room, Flat, Flatmate, Record, CleanUp
 from .serializers import FlatSerializer, FlatDetailSerializer, RecordSerializer, FlatmateSerializer, \
     FlatmateDetailSerializer, RoomSerializer, RoomDetailSerializer, CleanUpSerializer, CleanUpDetailSerializer, \
-    RecordDetailSerializer, UserSerializer, UserDetailSerializer
-from rest_framework import generics
+    RecordDetailSerializer, UserSerializer, UserDetailSerializer, ChangePasswordSerializer, FlatmateSerializerViewset, \
+    RoomSerializerViewset, CleanUpSerializerViewset, FlatSerializerViewset, RecordSerializerViewset, \
+    UserSerializerViewset
+from rest_framework import generics, permissions, status, viewsets
+
+
 # Create your views here.
 
 
@@ -101,3 +106,57 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserDetailSerializer
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    """
+    Endpoint for changing password
+    """
+    serializer_class = ChangePasswordSerializer
+    model = User
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get('old_password')):
+                return Response({'old_password': 'Wrong password'}, status=status.HTTP_400_BAD_REQUEST)
+            self.object.set_password(serializer.data.get('new_password'))
+            self.object.save()
+            return Response("Success.", status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FlatViewset(viewsets.ModelViewSet):
+    queryset = Flat.objects.all()
+    serializer_class =FlatSerializerViewset
+
+
+class FlatmateViewset(viewsets.ModelViewSet):
+    queryset = Flatmate.objects.all()
+    serializer_class = FlatmateSerializerViewset
+
+
+class RoomViewset(viewsets.ModelViewSet):
+    queryset = Room.objects.all()
+    serializer_class = RoomSerializerViewset
+
+
+class CleanUpViewset(viewsets.ModelViewSet):
+    queryset = CleanUp.objects.all()
+    serializer_class = CleanUpSerializerViewset
+
+
+class RecordViewset(viewsets.ModelViewSet):
+    queryset = Record.objects.all()
+    serializer_class = RecordSerializerViewset
+
+
+class UserViewset(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializerViewset
