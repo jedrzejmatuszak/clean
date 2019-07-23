@@ -52,7 +52,7 @@
         for (let child of $(this).children()) {
             if (child.selected) {
                 let flat_pk = child.value;
-                let url = '/api/load-rooms';
+                let url = '/api/v1/load-rooms';
                 $.ajax({
                     url: url,
                     data: {
@@ -61,7 +61,7 @@
                 }).done(function(data){
                     $('#id_room').html(data)
                 });
-                let url2 = '/api/load-flatmate';
+                let url2 = '/api/v1/load-flatmate';
                 $.ajax({
                     url: url2,
                     data: {
@@ -82,7 +82,7 @@
                         var flat_pk = child.value
                     }
                 }
-                let url = '/api/load-clean';
+                let url = '/api/v1/load-clean';
                 $.ajax({
                     url: url,
                     data: {
@@ -104,7 +104,7 @@
                         var room_pk = child.value
                     }
                 }
-                let url = '/api/load-points';
+                let url = '/api/v1/load-points';
                 $.ajax({
                     url: url,
                     data: {
