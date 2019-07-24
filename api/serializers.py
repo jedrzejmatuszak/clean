@@ -84,7 +84,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'user_detail']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'user_detail']
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -95,48 +95,4 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
-
-
-class ChangePasswordSerializer(serializers.Serializer):
-    """
-    Serializer for password change endpoint
-    """
-    old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-
-
-class FlatSerializerViewset(serializers.ModelSerializer):
-    class Meta:
-        model = Flat
-        fields = '__all__'
-
-
-class RoomSerializerViewset(serializers.ModelSerializer):
-    class Meta:
-        model = Room
-        fields = '__all__'
-
-
-class CleanUpSerializerViewset(serializers.ModelSerializer):
-    class Meta:
-        model = CleanUp
-        fields = '__all__'
-
-
-class FlatmateSerializerViewset(serializers.ModelSerializer):
-    class Meta:
-        model = Flatmate
-        fields = '__all__'
-
-
-class RecordSerializerViewset(serializers.ModelSerializer):
-    class Meta:
-        model = Record
-        fields = '__all__'
-
-
-class UserSerializerViewset(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = '__all__'
+        exclude = ['password', ]

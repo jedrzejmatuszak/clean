@@ -41,5 +41,5 @@ class RecordAdmin(admin.ModelAdmin):
 
 
 UserAdmin.list_display = ('id', 'username', 'email', 'first_name', 'last_name',
-                          'is_staff', 'date_joined', 'last_login')
+                          'is_staff', 'date_joined', 'last_login', 'is_active')
 UserAdmin.ordering = ['id', ]
