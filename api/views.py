@@ -83,7 +83,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
             queryset = User.objects.get(pk=pk)
-            serializer = UserDetailSerializer(self.queryset, pk=pk)
+            serializer = UserDetailSerializer(queryset)
             return Response(serializer.data)
         except User.DoesNotExist:
             raise Http404
