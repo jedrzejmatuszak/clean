@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.http import Http404
 from rest_framework.response import Response
 from .models import Room, Flat, Flatmate, Record, CleanUp
 from .serializers import FlatSerializer, FlatDetailSerializer, RecordSerializer, FlatmateSerializer, \
@@ -15,8 +16,12 @@ class FlatViewSet(viewsets.ModelViewSet):
     serializer_class = FlatSerializer
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        serializer = FlatDetailSerializer(self.queryset, pk=pk)
-        return Response(serializer.data)
+        try:
+            queryset = Flat.objects.get(pk=pk)
+            serializer = FlatDetailSerializer(queryset)
+            return Response(serializer.data)
+        except Flat.DoesNotExist:
+            raise Http404
 
 
 class FlatmateViewSet(viewsets.ModelViewSet):
@@ -24,8 +29,12 @@ class FlatmateViewSet(viewsets.ModelViewSet):
     serializer_class = FlatmateSerializer
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        serializer = FlatmateDetailSerializer(self.queryset, pk=pk)
-        return Response(serializer.data)
+        try:
+            queryset = Flatmate.objects.get(pk=pk)
+            serializer = FlatmateDetailSerializer(queryset)
+            return Response(serializer.data)
+        except Flatmate.DoesNotExist:
+            raise Http404
 
 
 class RoomViewSet(viewsets.ModelViewSet):
@@ -33,8 +42,12 @@ class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        serializer = RoomDetailSerializer(self.queryset, pk=pk)
-        return Response(serializer.data)
+        try:
+            queryset = Room.objects.get(pk=pk)
+            serializer = RoomDetailSerializer(queryset)
+            return Response(serializer.data)
+        except Room.DoesNotExist:
+            raise Http404
 
 
 class CleanUpViewSet(viewsets.ModelViewSet):
@@ -42,8 +55,12 @@ class CleanUpViewSet(viewsets.ModelViewSet):
     serializer_class = CleanUpSerializer
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        serializer = CleanUpDetailSerializer(self.queryset, pk=pk)
-        return Response(serializer.data)
+        try:
+            queryset = CleanUp.objects.get(pk=pk)
+            serializer = CleanUpDetailSerializer(queryset)
+            return Response(serializer.data)
+        except CleanUp.DoesNotExist:
+            raise Http404
 
 
 class RecordViewSet(viewsets.ModelViewSet):
@@ -51,8 +68,12 @@ class RecordViewSet(viewsets.ModelViewSet):
     serializer_class = RecordSerializer
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        serializer = RecordDetailSerializer(self.queryset, pk=pk)
-        return Response(serializer.data)
+        try:
+            queryset = Record.objects.get(pk=pk)
+            serializer = RecordDetailSerializer(queryset)
+            return Response(serializer.data)
+        except Record.DoesNotExist:
+            raise Http404
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -60,5 +81,9 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        serializer = UserDetailSerializer(self.queryset, pk=pk)
-        return Response(serializer.data)
+        try:
+            queryset = User.objects.get(pk=pk)
+            serializer = UserDetailSerializer(self.queryset, pk=pk)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            raise Http404
