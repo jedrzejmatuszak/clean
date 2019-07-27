@@ -131,3 +131,68 @@ class GetAllFlatmateTest(APITestCase):
         response = self.client.delete(reverse('flatmate-detail', kwargs={'pk': 22}),
                                       format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestRoomObjects(APITestCase):
+
+    def setUp(self):
+        self.flat = Flat.objects.create(name='Test Flat')
+        self.view = RoomViewSet.as_view({'get': 'list'})
+        self.factory = APIRequestFactory()
+        self.client = APIClient()
+        self.flat = Flat.objects.create(name='Test Flat')
+        self.test_room = Room.objects.create(name='Test Room', flat=self.flat)
+
+    def get_all_room_test(self):
+        """ Test module to list all room instances
+        through API """
+        # lists all of Room instances
+        request = self.factory.get(reverse('room-list'))
+        response = self.view(request)
+        rooms = Room.objects.all()
+        serializer = RoomSerializer(rooms, many=True, context={'request': request})
+        self.assertEqual(serializer.data, response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def create_update_delete_room(self):
+        """ Test module to create, update and delete room instance """
+        # create first Room instance
+        response = self.client.post(reverse('room-list'),
+                                    {'name': 'Test Room 1', 'flat': self.flat},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # detail of Room instance
+        room_id = response.json()['id']
+        response = self.client.get(reverse('room-detail', kwargs={'pk': room_id}),
+                                   format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['name'], 'Test Room 1')
+        # create second Room instance
+        response = self.client.post(reverse('room-list'),
+                                    {'name': 'Test Room 2', 'flat': self.flat},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # try to create Room instance - BAD REQUEST
+        response = self.client.post(reverse('room-list'),
+                                    {'namee': 'Anything', 'flat': self.flat},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # partial update one of instances
+        response = self.client.patch(reverse('room-detail', kwargs={'pk': room_id}),
+                                     {'name': 'Test Test Room'},
+                                     format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['name'], 'Test Test Room')
+        # try to partial update
+        response = self.client.patch(reverse('room-detail', kwargs={'pk': room_id}),
+                                     {'naaame': 'Room'},
+                                     format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # delete single instance of Room
+        response = self.client.delete(reverse('room-detail', kwargs={'pk': room_id}),
+                                      format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # try to delete single instance of Room - invalid pk
+        response = self.client.delete(reverse('room-detail', kwargs={'pk': room_id}),
+                                      format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
