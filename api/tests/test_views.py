@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from django.urls import reverse
 from ..views import *
@@ -8,9 +10,9 @@ from ..serializers import *
 class FlatTest(APITestCase):
 
     def setUp(self):
+        self.view = FlatViewSet.as_view({'get': 'list'})
         self.factory = APIRequestFactory()
         self.client = APIClient()
-        self.view = FlatViewSet.as_view({'get': 'list'})
         self.flat_1 = Flat.objects.create(name='Test Flat 1')
         self.flat_2 = Flat.objects.create(name='Test Flat 2')
 
@@ -143,7 +145,7 @@ class RoomTest(APITestCase):
         self.flat = Flat.objects.create(name='Test Flat')
         self.test_room = Room.objects.create(name='Test Room', flat=self.flat)
 
-    def get_all_room_test(self):
+    def test_get_all_room(self):
         """ Test module to list all room instances through API """
         # lists all of Room instances
         request = self.factory.get(reverse('room-list'))
@@ -153,11 +155,11 @@ class RoomTest(APITestCase):
         self.assertEqual(serializer.data, response.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def create_update_delete_room(self):
+    def test_create_update_delete_room(self):
         """ Test module to create, update and delete room instance """
         # create first Room instance
         response = self.client.post(reverse('room-list'),
-                                    {'name': 'Test Room 1', 'flat': self.flat},
+                                    {'name': 'Test Room 1', 'flat': self.flat.pk},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # detail of Room instance
@@ -168,12 +170,12 @@ class RoomTest(APITestCase):
         self.assertEqual(response.json()['name'], 'Test Room 1')
         # create second Room instance
         response = self.client.post(reverse('room-list'),
-                                    {'name': 'Test Room 2', 'flat': self.flat},
+                                    {'name': 'Test Room 2', 'flat': self.flat.pk},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # try to create Room instance - BAD REQUEST
         response = self.client.post(reverse('room-list'),
-                                    {'namee': 'Anything', 'flat': self.flat},
+                                    {'namee': 'Anything', 'flat': self.flat.pk},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # partial update one of instances
@@ -183,7 +185,7 @@ class RoomTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['name'], 'Test Test Room')
         # try to partial update
-        response = self.client.patch(reverse('room-detail', kwargs={'pk': room_id}),
+        response = self.client.put(reverse('room-detail', kwargs={'pk': room_id}),
                                      {'naaame': 'Room'},
                                      format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -207,7 +209,7 @@ class CleanUpTest(APITestCase):
         self.room = Room.objects.create(name='Test Room', flat=self.flat)
         self.cleanup = CleanUp.objects.create(name='Test Cleanup', points=50, room=self.room)
 
-    def get_all_cleanups(self):
+    def test_get_all_cleanups(self):
         request = self.factory.get(reverse('cleanup-list'), format='json')
         response = self.view(request)
         cleanups = CleanUp.objects.all()
@@ -215,10 +217,10 @@ class CleanUpTest(APITestCase):
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def create_update_delete_cleanup(self):
+    def test_create_update_delete_cleanup(self):
         # create single Clean Up instance
         response = self.client.post(reverse('cleanup-list'),
-                                    {'name': 'Test CleanUp 2', 'points': 20, 'room': self.room},
+                                    {'name': 'Test CleanUp 2', 'points': 20, 'room': self.room.pk},
                                     format='json')
         cleanup_id = response.json()['id']
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -233,27 +235,108 @@ class CleanUpTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         # trying to create single Clean Up instance
         response = self.client.post(reverse('cleanup-list'),
-                                    {'name': 'Test Cleanup 3', 'points': '40', 'room': self.room},
+                                    {'name': 'Test Cleanup 3', 'pooints': 40, 'room': self.room.pk},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # partial update of single Clean Up instance
-        response = self.client.patch(reverse('cleanup-list', kwargs={'pk': cleanup_id}),
+        response = self.client.patch(reverse('cleanup-detail', kwargs={'pk': cleanup_id}),
                                      {'points': 40},
                                      format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()['points'], 40)
         # trying to update single Clean Up instance
-        response = self.client.patch(reverse('cleanup-list', kwargs={'pk': cleanup_id}),
-                                     {'naame': 'Test Test CleanUp'},
-                                     format='json')
+        response = self.client.put(reverse('cleanup-detail', kwargs={'pk': cleanup_id}),
+                                   {'naame': 'Test Test CleanUp'},
+                                   format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # delete single instance
-        response = self.client.delete(reverse('cleanup-list', kwargs={'pk': cleanup_id}),
+        response = self.client.delete(reverse('cleanup-detail', kwargs={'pk': cleanup_id}),
                                       format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         # trying to delete not existing instance
-        response = self.client.delete(reverse('cleanup-list', kwargs={'pk': cleanup_id}),
+        response = self.client.delete(reverse('cleanup-detail', kwargs={'pk': cleanup_id}),
                                       format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-# TODO: Record
+
+class RecordTest(APITestCase):
+
+    def setUp(self):
+        self.view = RecordViewSet.as_view({'get': 'list'})
+        self.client = APIClient()
+        self.factory = APIRequestFactory()
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testuser'
+        )
+        self.flat = Flat.objects.create(
+            name='Test Flat'
+        )
+        self.flatmate = Flatmate.objects.create(
+            user=self.user,
+            flat=self.flat
+        )
+        self.room = Room.objects.create(
+            name='Test Room',
+            flat=self.flat
+        )
+        self.cleanup = CleanUp.objects.create(
+            name='Test CleanUp',
+            points=20,
+            room=self.room
+        )
+        self.record = Record.objects.create(
+            flat=self.flat,
+            room=self.room,
+            cleanup=self.cleanup,
+            flatmate=self.flatmate,
+            to_date='2019-07-30',
+            points=self.cleanup.points
+        )
+
+    def test_get_all_records(self):
+        request = self.factory.get(reverse('record-list'))
+        response = self.view(request)
+        records = Record.objects.all()
+        serializer = RecordSerializer(records, many=True, context={'request': request})
+        self.assertEqual(response.data, serializer.data)
+
+    def test_create_update_delete_record(self):
+        # create single record instance
+        response = self.client.post(reverse('record-list'),
+                                    {'flat': self.flat.pk, 'room': self.room.pk, 'cleanup': self.cleanup.pk,
+                                     'flatmate': self.flatmate.pk, 'date': datetime.datetime.now(),
+                                     'to_date': '2019-08-30', 'points': self.cleanup.points},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # record_pk = response.json()['id']
+        # # list detail of single record instance
+        # response = self.client.get(reverse('record-detail',
+        #                                    kwargs={'pk': record_pk}),
+        #                            format='json')
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # # not found signle record instance
+        # response = self.client.get(reverse('record-detail',
+        #                                    kwargs={'pk': 49}),
+        #                            format='json')
+        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # # create single record instance - BAD REQUEST
+        # response = self.client.post(reverse('record-list'),
+        #                             {
+        #                                 'flat': self.flat.pk,
+        #                                 'room': self.room.pk,
+        #                             }, format='json')
+        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # # update single record instance
+        # response = self.client.patch(reverse('record-detail', kwargs={'pk': record_pk}),
+        #                              {'to_date': '2020-08-28'},
+        #                              format='json')
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # # delete single record instance
+        # response = self.client.delete(reverse('record-detail', kwargs={'pk': record_pk}),
+        #                               format='json')
+        # self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # # delete single record instance - NOT FOUND
+        # response = self.client.delete(reverse('record-detail', kwargs={'pk': record_pk}),
+        #                               format='json')
+        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
