@@ -67,6 +67,21 @@ class RecordViewSet(viewsets.ModelViewSet):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = RecordSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            new_record = Record.objects.create(
+                flat=serializer.validated_data['flat'],
+                room=serializer.validated_data['room'],
+                cleanup=serializer.validated_data['cleanup'],
+                flatmate=serializer.validated_data['flatmate'],
+                to_date=serializer.validated_data['to_date'],
+                points=serializer.validated_data['cleanup'].points
+            )
+            return Response(RecordDetailSerializer(new_record).data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
             queryset = Record.objects.get(pk=pk)

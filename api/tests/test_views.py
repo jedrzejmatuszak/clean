@@ -1,5 +1,3 @@
-import datetime
-
 from rest_framework.test import APITestCase, APIRequestFactory, APIClient
 from django.urls import reverse
 from ..views import *
@@ -303,40 +301,60 @@ class RecordTest(APITestCase):
 
     def test_create_update_delete_record(self):
         # create single record instance
-        response = self.client.post(reverse('record-list'),
-                                    {'flat': self.flat.pk, 'room': self.room.pk, 'cleanup': self.cleanup.pk,
-                                     'flatmate': self.flatmate.pk, 'date': datetime.datetime.now(),
-                                     'to_date': '2019-08-30', 'points': self.cleanup.points},
+        response = self.client.post(reverse('flat-list'),
+                                    {'name': 'Test Flat 3'},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # record_pk = response.json()['id']
-        # # list detail of single record instance
-        # response = self.client.get(reverse('record-detail',
-        #                                    kwargs={'pk': record_pk}),
-        #                            format='json')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # # not found signle record instance
-        # response = self.client.get(reverse('record-detail',
-        #                                    kwargs={'pk': 49}),
-        #                            format='json')
-        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        # # create single record instance - BAD REQUEST
-        # response = self.client.post(reverse('record-list'),
-        #                             {
-        #                                 'flat': self.flat.pk,
-        #                                 'room': self.room.pk,
-        #                             }, format='json')
-        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # # update single record instance
-        # response = self.client.patch(reverse('record-detail', kwargs={'pk': record_pk}),
-        #                              {'to_date': '2020-08-28'},
-        #                              format='json')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # # delete single record instance
-        # response = self.client.delete(reverse('record-detail', kwargs={'pk': record_pk}),
-        #                               format='json')
-        # self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        # # delete single record instance - NOT FOUND
-        # response = self.client.delete(reverse('record-detail', kwargs={'pk': record_pk}),
-        #                               format='json')
-        # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        flat_id = response.json()['id']
+        response = self.client.post(reverse('flatmate-list'),
+                                    {'user': self.user.pk, 'flat': flat_id},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        flatmate_id = response.json()['id']
+        response = self.client.post(reverse('room-list'),
+                                    {'name': 'Test Room', 'flat': flat_id},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        room_id = response.json()['id']
+        response = self.client.post(reverse('cleanup-list'),
+                                    {'name': 'Test Cleanup', 'points': 50, 'room': room_id},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        cleanup_id = response.json()['id']
+        cleanup_points = response.json()['points']
+        response = self.client.post(reverse('record-list'),
+                                    {'flat': flat_id, 'room': room_id, 'cleanup': cleanup_id,
+                                     'flatmate': flatmate_id, 'to_date': '2019-08-30'},
+                                    format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        record_pk = response.json()['id']
+        # list detail of single record instance
+        response = self.client.get(reverse('record-detail',
+                                           kwargs={'pk': record_pk}),
+                                   format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # not found signle record instance
+        response = self.client.get(reverse('record-detail',
+                                           kwargs={'pk': 49}),
+                                   format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # create single record instance - BAD REQUEST
+        response = self.client.post(reverse('record-list'),
+                                    {
+                                        'flat': self.flat.pk,
+                                        'room': self.room.pk,
+                                    }, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # update single record instance
+        response = self.client.patch(reverse('record-detail', kwargs={'pk': record_pk}),
+                                     {'to_date': '2020-08-28'},
+                                     format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # delete single record instance
+        response = self.client.delete(reverse('record-detail', kwargs={'pk': record_pk}),
+                                      format='json')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        # delete single record instance - NOT FOUND
+        response = self.client.delete(reverse('record-detail', kwargs={'pk': record_pk}),
+                                      format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
