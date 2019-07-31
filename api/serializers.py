@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Flat, Flatmate, Room, Record, CleanUp, User
+from .models import Flat, Flatmate, Room, Record, CleanUp
 
 
 class FlatSerializer(serializers.ModelSerializer):
@@ -7,14 +7,14 @@ class FlatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Flat
-        fields = ['id', 'name', 'flat_details']
+        fields = ['id', 'name', 'parent_mode', 'flat_details']
 
 
 class FlatDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Flat
-        fields = ['id', 'name', 'flatmates', 'rooms', 'flat_records']
+        fields = ['id', 'name', 'parent_mode', 'flatmates', 'rooms', 'flat_records']
 
 
 class FlatmateSerializer(serializers.ModelSerializer):
@@ -77,22 +77,3 @@ class RecordDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
         fields = '__all__'
-
-
-class UserSerializer(serializers.ModelSerializer):
-    user_detail = serializers.HyperlinkedIdentityField(view_name='user-detail')
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'user_detail']
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        exclude = ['password', ]

@@ -1,5 +1,5 @@
 import datetime
-
+from api.models import CustomUser
 from django.test import TestCase
 from ..models import *
 
@@ -17,7 +17,7 @@ class ModelTests(TestCase):
         cleanup_bath_1 = CleanUp.objects.create(name='cleanup_bath_1', points=25, room=room_bath)
         cleanup_bed_1 = CleanUp.objects.create(name='cleanup_bed_1', points=32, room=room_bed)
         # creating user & flatmate
-        test_user = User.objects.create(username='test_user')
+        test_user = CustomUser.objects.create(username='test_user')
         test_user.set_password(raw_password='test_user')
         test_user.save()
         test_flatmate = Flatmate.objects.create(user=test_user, flat=test_flat)
@@ -59,7 +59,7 @@ class ModelTests(TestCase):
         self.assertEqual(test_cleanup.room.name, 'Bedroom')
 
     def test_flatmates(self):
-        user = User.objects.get(username='test_user')
+        user = CustomUser.objects.get(username='test_user')
         test_flatmate = Flatmate.objects.get(user=user)
         self.assertTrue(test_flatmate.user.username, 'test_user')
         self.assertEqual(test_flatmate.flat.name, 'Test Flat')

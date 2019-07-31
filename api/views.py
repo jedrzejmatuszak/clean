@@ -1,10 +1,9 @@
-from django.contrib.auth.models import User
 from django.http import Http404
 from rest_framework.response import Response
 from .models import Room, Flat, Flatmate, Record, CleanUp
 from .serializers import FlatSerializer, FlatDetailSerializer, RecordSerializer, FlatmateSerializer, \
     FlatmateDetailSerializer, RoomSerializer, RoomDetailSerializer, CleanUpSerializer, CleanUpDetailSerializer, \
-    RecordDetailSerializer, UserSerializer, UserDetailSerializer
+    RecordDetailSerializer
 from rest_framework import generics, permissions, status, viewsets
 
 
@@ -76,7 +75,7 @@ class RecordViewSet(viewsets.ModelViewSet):
                 cleanup=serializer.validated_data['cleanup'],
                 flatmate=serializer.validated_data['flatmate'],
                 to_date=serializer.validated_data['to_date'],
-                points=serializer.validated_data['cleanup'].points
+                points=serializer.validated_data['cleanup'].points,
             )
             return Response(RecordDetailSerializer(new_record).data, status=status.HTTP_201_CREATED)
         else:
@@ -88,17 +87,4 @@ class RecordViewSet(viewsets.ModelViewSet):
             serializer = RecordDetailSerializer(queryset)
             return Response(serializer.data)
         except Record.DoesNotExist:
-            raise Http404
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        try:
-            queryset = User.objects.get(pk=pk)
-            serializer = UserDetailSerializer(queryset)
-            return Response(serializer.data)
-        except User.DoesNotExist:
             raise Http404

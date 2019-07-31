@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'api',
+    'api_user',
 ]
 
 REST_FRAMEWORK = {
@@ -87,6 +88,9 @@ WSGI_APPLICATION = 'clean_management.wsgi.application'
 
 DATABASES = DATABASES
 
+
+# Auth User
+AUTH_USER_MODEL = 'api_user.CustomUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

@@ -3,6 +3,7 @@ from django.urls import reverse
 from ..views import *
 from ..models import *
 from ..serializers import *
+from api.models import CustomUser
 
 
 class FlatTest(APITestCase):
@@ -72,9 +73,9 @@ class FlatmateTest(APITestCase):
         self.client = APIClient()
         self.test_flat = Flat.objects.create(name='Test Flat')
         self.test_flat2 = Flat.objects.create(name='Test Flat 2')
-        self.test_user1 = User.objects.create_user(username='User1', password='User1')
-        self.test_user2 = User.objects.create_user(username='User2', password='User2')
-        self.test_user3 = User.objects.create_user(username='User3', password='User3')
+        self.test_user1 = CustomUser.objects.create_user(username='User1', password='User1')
+        self.test_user2 = CustomUser.objects.create_user(username='User2', password='User2')
+        self.test_user3 = CustomUser.objects.create_user(username='User3', password='User3')
 
     def test_create_get_all_flatmates(self):
         """ Test module for create flatmate to self.test_flat and
@@ -263,7 +264,7 @@ class RecordTest(APITestCase):
         self.view = RecordViewSet.as_view({'get': 'list'})
         self.client = APIClient()
         self.factory = APIRequestFactory()
-        self.user = User.objects.create_user(
+        self.user = CustomUser.objects.create_user(
             username='testuser',
             password='testuser'
         )

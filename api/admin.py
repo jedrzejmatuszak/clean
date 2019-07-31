@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Room, Flat, CleanUp, Record, Flatmate
-from django.contrib.auth.admin import UserAdmin
 
 
 # Register your models here.
@@ -38,8 +37,3 @@ class FlatmateAdmin(admin.ModelAdmin):
 class RecordAdmin(admin.ModelAdmin):
     list_display = ('flat', 'flatmate', 'room', 'cleanup', 'date', 'to_date', 'realized', 'points')
     fields = ('flat', 'flatmate', 'room', 'cleanup', 'to_date', 'points', 'realized')
-
-
-UserAdmin.list_display = ('id', 'username', 'email', 'first_name', 'last_name',
-                          'is_staff', 'date_joined', 'last_login', 'is_active')
-UserAdmin.ordering = ['id', ]
