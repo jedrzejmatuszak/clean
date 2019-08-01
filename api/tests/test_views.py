@@ -1,4 +1,4 @@
-from rest_framework.test import APITestCase, APIRequestFactory, APIClient
+from rest_framework.test import APITestCase, APIRequestFactory, APIClient, force_authenticate
 from django.urls import reverse
 from ..views import *
 from ..models import *
@@ -14,11 +14,23 @@ class FlatTest(APITestCase):
         self.client = APIClient()
         self.flat_1 = Flat.objects.create(name='Test Flat 1')
         self.flat_2 = Flat.objects.create(name='Test Flat 2')
+        self.test_user = CustomUser.objects.create_user(
+            username='test',
+            password='test',
+            email='test@test.tt',
+            is_staff=True,
+            is_active=True
+        )
+        response = self.client.post(reverse('login'),
+                                    {'username': self.test_user.username,
+                                    'password': 'test'}, format='json')
+        self.token = response.json()['auth_token']
 
     def test_get_all_flats(self):
         """ Test module for GET all flat API """
         # get API response
         request = self.factory.get(reverse('flat-list'))
+        force_authenticate(request, user=self.test_user, token=self.token)
         response = self.view(request)
         # get data from db
         flats = Flat.objects.all()
@@ -29,6 +41,7 @@ class FlatTest(APITestCase):
     def test_detail_flat(self):
         """ Test module for GET single flat API """
         # get API response
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
         response = self.client.get(reverse('flat-detail',
                                            kwargs={'pk': self.flat_1.pk}),
                                    format='json')
@@ -44,6 +57,7 @@ class FlatTest(APITestCase):
 
     def test_create_update_delete_flat(self):
         """ Test module for create, update, delete single flat instance """
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
         response = self.client.post(reverse('flat-list'), {'name': 'Post Flat'},
                                     format='json')
         flat_id = response.json()['id']
@@ -73,9 +87,27 @@ class FlatmateTest(APITestCase):
         self.client = APIClient()
         self.test_flat = Flat.objects.create(name='Test Flat')
         self.test_flat2 = Flat.objects.create(name='Test Flat 2')
-        self.test_user1 = CustomUser.objects.create_user(username='User1', password='User1')
-        self.test_user2 = CustomUser.objects.create_user(username='User2', password='User2')
-        self.test_user3 = CustomUser.objects.create_user(username='User3', password='User3')
+        self.test_user1 = CustomUser.objects.create_user(username='User1',
+                                                         password='User1',
+                                                         email='user1@u.u',
+                                                         is_active=True,
+                                                         is_staff=True)
+        response = self.client.post(reverse('login'),
+                                    {'username': self.test_user1.username,
+                                     'password': 'User1'},
+                                    format='json')
+        self.token = response.json()['auth_token']
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
+        self.test_user2 = CustomUser.objects.create_user(username='User2',
+                                                         password='User2',
+                                                         email='user2@u.u',
+                                                         is_active=True,
+                                                         is_staff=True)
+        self.test_user3 = CustomUser.objects.create_user(username='User3',
+                                                         password='User3',
+                                                         email='user3@u.u',
+                                                         is_active=True,
+                                                         is_staff=True)
 
     def test_create_get_all_flatmates(self):
         """ Test module for create flatmate to self.test_flat and
@@ -86,6 +118,7 @@ class FlatmateTest(APITestCase):
                                      format='json')
         # get API response
         request = self.factory.get(reverse('flatmate-list'))
+        force_authenticate(request, user=self.test_user1, token=self.token)
         response = self.view(request)
         # get Flatmates from db
         flatmates = Flatmate.objects.all()
@@ -143,11 +176,25 @@ class RoomTest(APITestCase):
         self.client = APIClient()
         self.flat = Flat.objects.create(name='Test Flat')
         self.test_room = Room.objects.create(name='Test Room', flat=self.flat)
+        self.test_user = CustomUser.objects.create_user(
+            username='test',
+            password='test',
+            email='test@t.t',
+            is_staff=True,
+            is_active=True
+        )
+        response = self.client.post(reverse('login'),
+                         {'username': self.test_user.username,
+                          'password': 'test'},
+                         format='json')
+        self.token = response.json()['auth_token']
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
 
     def test_get_all_room(self):
         """ Test module to list all room instances through API """
         # lists all of Room instances
         request = self.factory.get(reverse('room-list'))
+        force_authenticate(request, user=self.test_user, token=self.token)
         response = self.view(request)
         rooms = Room.objects.all()
         serializer = RoomSerializer(rooms, many=True, context={'request': request})
@@ -207,9 +254,23 @@ class CleanUpTest(APITestCase):
         self.flat = Flat.objects.create(name='Test Flat')
         self.room = Room.objects.create(name='Test Room', flat=self.flat)
         self.cleanup = CleanUp.objects.create(name='Test Cleanup', points=50, room=self.room)
+        self.test_user = CustomUser.objects.create_user(
+            username='test',
+            password='test',
+            email='test@t.t',
+            is_active=True,
+            is_staff=True
+        )
+        response = self.client.post(reverse('login'),
+                                    {'username': self.test_user.username,
+                                     'password': 'test'},
+                                    format='json')
+        self.token = response.json()['auth_token']
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
 
     def test_get_all_cleanups(self):
         request = self.factory.get(reverse('cleanup-list'), format='json')
+        force_authenticate(request, user=self.test_user, token=self.token)
         response = self.view(request)
         cleanups = CleanUp.objects.all()
         serializer = CleanUpSerializer(cleanups, many=True, context={'request': request})
@@ -266,8 +327,17 @@ class RecordTest(APITestCase):
         self.factory = APIRequestFactory()
         self.user = CustomUser.objects.create_user(
             username='testuser',
-            password='testuser'
+            password='testuser',
+            email='testuser@t.t',
+            is_active=True,
+            is_staff=True
         )
+        response = self.client.post(reverse('login'),
+                                    {'username': self.user.username,
+                                     'password': 'testuser'},
+                                    format='json')
+        self.token = response.json()['auth_token']
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.token)
         self.flat = Flat.objects.create(
             name='Test Flat'
         )
@@ -295,6 +365,7 @@ class RecordTest(APITestCase):
 
     def test_get_all_records(self):
         request = self.factory.get(reverse('record-list'))
+        force_authenticate(request, user=self.user, token=self.token)
         response = self.view(request)
         records = Record.objects.all()
         serializer = RecordSerializer(records, many=True, context={'request': request})
