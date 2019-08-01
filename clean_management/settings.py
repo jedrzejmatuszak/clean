@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
     'api',
     'api_user',
 ]
@@ -47,8 +49,23 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     # Use Django's standard 'django.contrib.auth' permissions,
     # or allow read-only access for unauthoenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+
+}
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}/',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}/',
+    'ACTIVATION_URL': 'api/v1/auth/users/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'LOGOUT_ON_PASSWORD_CHANGE': True,
+    'SERIALIZERS': {},
 }
 
 MIDDLEWARE = [
