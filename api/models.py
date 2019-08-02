@@ -45,7 +45,7 @@ class Record(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='room_records')
     cleanup = models.ForeignKey(CleanUp, on_delete=models.CASCADE, related_name='cleanup_records')
     flatmate = models.ForeignKey(Flatmate, on_delete=models.CASCADE, related_name='flatmate_records')
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, editable=False, blank=False)
     date = models.DateTimeField(auto_now_add=True)
     to_date = models.DateField()
     realized = models.BooleanField(default=False)
@@ -53,3 +53,7 @@ class Record(models.Model):
 
     def __str__(self):
         return f"{self.room} - {self.cleanup} - {self.flatmate} - {self.to_date}"
+
+    def save(self, *args, **kwargs):
+        self.points = self.cleanup.points
+        super(Record, self).save(*args, **kwargs)

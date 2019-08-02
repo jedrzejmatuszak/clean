@@ -35,5 +35,10 @@ class FlatmateAdmin(admin.ModelAdmin):
 
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
-    list_display = ('flat', 'flatmate', 'room', 'cleanup', 'date', 'to_date', 'realized', 'points')
+    list_display = ('flat', 'flatmate', 'room', 'cleanup', 'date', 'to_date', 'realized', 'points', 'author')
     fields = ('flat', 'flatmate', 'room', 'cleanup', 'to_date', 'points', 'realized')
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author', None) is None:
+            obj.author = request.user
+        obj.save()
