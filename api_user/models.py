@@ -5,7 +5,6 @@ from django.utils.translation import gettext_lazy as _
 
 
 class CustomUser(AbstractUser):
-    email = models.EmailField(_('email address'), blank=False)
     is_parent = models.BooleanField(
         _('is parent'),
         default=False,
@@ -22,8 +21,6 @@ class CustomUser(AbstractUser):
             'Unselect this instead of deleting accounts.'
         ),
     )
-
-    REQUIRED_FIELDS = ['email', 'password']
 
     def __str__(self):
         if self.first_name and self.last_name:

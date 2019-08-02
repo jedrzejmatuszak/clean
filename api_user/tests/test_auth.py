@@ -13,7 +13,8 @@ class TestAuth(APITestCase):
         self.client = APIClient()
         self.flat = Flat.objects.create(name='test')
 
-    def test_user_creation(self):
+    def test_api_user_app(self):
+        # CustomUser creation
         data = {
             'username': 'test',
             'password': 'alpine12',
@@ -22,8 +23,8 @@ class TestAuth(APITestCase):
         response = self.client.post(reverse('customuser-list'), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         user = CustomUser.objects.get(username='test')
+        # simulation of email authentication
         user.is_active = True
-        user.is_staff = True
         user.save()
         # Authentication test
         data = {
@@ -36,4 +37,3 @@ class TestAuth(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+token)
         response = self.client.get(reverse('flat-detail', kwargs={'pk': 1}))
         self.assertEqual(response.json()['name'], 'test')
-

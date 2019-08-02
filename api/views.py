@@ -13,9 +13,10 @@ from rest_framework import generics, permissions, status, viewsets
 class FlatViewSet(viewsets.ModelViewSet):
     queryset = Flat.objects.all()
     serializer_class = FlatSerializer
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
+        permission_classes = [permissions.IsAuthenticated]
         try:
             queryset = Flat.objects.get(pk=pk)
             serializer = FlatDetailSerializer(queryset)
@@ -27,7 +28,7 @@ class FlatViewSet(viewsets.ModelViewSet):
 class FlatmateViewSet(viewsets.ModelViewSet):
     queryset = Flatmate.objects.all()
     serializer_class = FlatmateSerializer
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
@@ -41,7 +42,7 @@ class FlatmateViewSet(viewsets.ModelViewSet):
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
@@ -55,7 +56,7 @@ class RoomViewSet(viewsets.ModelViewSet):
 class CleanUpViewSet(viewsets.ModelViewSet):
     queryset = CleanUp.objects.all()
     serializer_class = CleanUpSerializer
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
         try:
@@ -69,7 +70,7 @@ class CleanUpViewSet(viewsets.ModelViewSet):
 class RecordViewSet(viewsets.ModelViewSet):
     queryset = Record.objects.all()
     serializer_class = RecordSerializer
-    permission_classes = [permissions.IsAdminUser, permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
         serializer = RecordSerializer(data=request.data, context={'request': request})
