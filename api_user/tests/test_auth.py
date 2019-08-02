@@ -2,8 +2,6 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from ..models import CustomUser
 from api.models import Flat
-from api.serializers import FlatSerializer, FlatDetailSerializer
-from .. serializers import CustomUserSerializer, CustomUserDetailSerializer
 from django.urls import reverse
 
 
