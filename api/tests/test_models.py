@@ -17,16 +17,14 @@ class ModelTests(TestCase):
         cleanup_bath_1 = CleanUp.objects.create(name='cleanup_bath_1', points=25, room=room_bath)
         cleanup_bed_1 = CleanUp.objects.create(name='cleanup_bed_1', points=32, room=room_bed)
         # creating user & flatmate
-        test_user = CustomUser.objects.create(username='test_user')
-        test_user.set_password(raw_password='test_user')
-        test_user.save()
+        test_user = CustomUser.objects.create_user(username='test_user', password='test_user')
         test_flatmate = Flatmate.objects.create(user=test_user, flat=test_flat)
         test_record_1 = Record.objects.create(
             flat=test_flat,
             room=room_bath,
             cleanup=cleanup_bath_1,
             flatmate=test_flatmate,
-            points=cleanup_bath_1.points,
+            author=test_user,
             to_date="2019-09-01"
         )
         test_record_2 = Record.objects.create(
@@ -34,7 +32,7 @@ class ModelTests(TestCase):
             room=room_bed,
             cleanup=cleanup_bed_1,
             flatmate=test_flatmate,
-            points=cleanup_bed_1.points,
+            author=test_user,
             to_date="2019-09-01"
         )
 

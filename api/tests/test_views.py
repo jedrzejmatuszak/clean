@@ -360,7 +360,7 @@ class RecordTest(APITestCase):
             cleanup=self.cleanup,
             flatmate=self.flatmate,
             to_date='2019-07-30',
-            points=self.cleanup.points
+            author=self.user
         )
 
     def test_get_all_records(self):
@@ -383,6 +383,7 @@ class RecordTest(APITestCase):
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         flatmate_id = response.json()['id']
+        user_id = response.json()['user']
         response = self.client.post(reverse('room-list'),
                                     {'name': 'Test Room', 'flat': flat_id},
                                     format='json')
@@ -396,7 +397,7 @@ class RecordTest(APITestCase):
         cleanup_points = response.json()['points']
         response = self.client.post(reverse('record-list'),
                                     {'flat': flat_id, 'room': room_id, 'cleanup': cleanup_id,
-                                     'flatmate': flatmate_id, 'to_date': '2019-08-30'},
+                                     'flatmate': flatmate_id, 'author': user_id, 'to_date': '2019-08-30'},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         record_pk = response.json()['id']

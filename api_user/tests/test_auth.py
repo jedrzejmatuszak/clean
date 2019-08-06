@@ -24,7 +24,7 @@ class TestAuth(APITestCase):
         # simulation of email authentication
         user.is_active = True
         user.save()
-        # Authentication test
+        # Authentication testpk
         data = {
             'username': 'test',
             'password': 'alpine12'
@@ -33,5 +33,5 @@ class TestAuth(APITestCase):
         token = response.json()['auth_token']
         self.assertTrue(token)
         self.client.credentials(HTTP_AUTHORIZATION='Token '+token)
-        response = self.client.get(reverse('flat-detail', kwargs={'pk': 1}))
+        response = self.client.get(reverse('flat-detail', kwargs={'pk': self.flat.id}))
         self.assertEqual(response.json()['name'], 'test')

@@ -16,7 +16,6 @@ class FlatViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def retrieve(self, request, pk=None, *args, **kwargs):
-        permission_classes = [permissions.IsAuthenticated]
         try:
             queryset = Flat.objects.get(pk=pk)
             serializer = FlatDetailSerializer(queryset)
@@ -81,7 +80,7 @@ class RecordViewSet(viewsets.ModelViewSet):
                 cleanup=serializer.validated_data['cleanup'],
                 flatmate=serializer.validated_data['flatmate'],
                 to_date=serializer.validated_data['to_date'],
-                points=serializer.validated_data['cleanup'].points,
+                author=serializer.validated_data['author'],
             )
             return Response(RecordDetailSerializer(new_record).data, status=status.HTTP_201_CREATED)
         else:

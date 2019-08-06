@@ -64,11 +64,10 @@ class CleanUpDetailSerializer(serializers.ModelSerializer):
 
 class RecordSerializer(serializers.ModelSerializer):
     record_details = serializers.HyperlinkedIdentityField(view_name='record-detail')
-    # date = serializers.DateTimeField(format='%Y-%m-%d %H:%M')
 
     class Meta:
         model = Record
-        fields = ['id', 'flat', 'room', 'flatmate', 'cleanup', 'to_date', 'realized', 'record_details']
+        fields = ['id', 'flat', 'room', 'flatmate', 'cleanup', 'author', 'to_date', 'realized', 'record_details']
 
 
 class RecordDetailSerializer(serializers.ModelSerializer):
