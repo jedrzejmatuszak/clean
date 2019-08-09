@@ -4,7 +4,7 @@ from .models import Room, Flat, Flatmate, Record, CleanUp
 from .serializers import FlatSerializer, FlatDetailSerializer, RecordSerializer, FlatmateSerializer, \
     FlatmateDetailSerializer, RoomSerializer, RoomDetailSerializer, CleanUpSerializer, CleanUpDetailSerializer, \
     RecordDetailSerializer, CreateRecordSerializer
-from rest_framework import generics, permissions, status, viewsets
+from rest_framework import permissions, status, viewsets
 
 
 # Create your views here.
