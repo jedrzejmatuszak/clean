@@ -1,3 +1,5 @@
+import datetime
+
 from rest_framework.test import APITestCase, APIRequestFactory, APIClient, force_authenticate
 from django.urls import reverse
 from ..views import *
@@ -397,7 +399,8 @@ class RecordTest(APITestCase):
         cleanup_points = response.json()['points']
         response = self.client.post(reverse('record-list'),
                                     {'flat': flat_id, 'room': room_id, 'cleanup': cleanup_id,
-                                     'flatmate': flatmate_id, 'author': user_id, 'to_date': '2019-08-30'},
+                                     'flatmate': flatmate_id, 'author': user_id, 'to_date': '2019-08-30',
+                                     'points': cleanup_points, 'date': datetime.datetime.now()},
                                     format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         record_pk = response.json()['id']

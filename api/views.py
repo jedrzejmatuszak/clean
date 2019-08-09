@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from .models import Room, Flat, Flatmate, Record, CleanUp
 from .serializers import FlatSerializer, FlatDetailSerializer, RecordSerializer, FlatmateSerializer, \
     FlatmateDetailSerializer, RoomSerializer, RoomDetailSerializer, CleanUpSerializer, CleanUpDetailSerializer, \
-    RecordDetailSerializer
+    RecordDetailSerializer, CreateRecordSerializer
 from rest_framework import generics, permissions, status, viewsets
 
 
@@ -72,7 +72,7 @@ class RecordViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request, *args, **kwargs):
-        serializer = RecordSerializer(data=request.data, context={'request': request})
+        serializer = CreateRecordSerializer(data=request.data)
         if serializer.is_valid():
             new_record = Record.objects.create(
                 flat=serializer.validated_data['flat'],

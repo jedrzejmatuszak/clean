@@ -45,7 +45,7 @@ class Record(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='room_records')
     cleanup = models.ForeignKey(CleanUp, on_delete=models.CASCADE, related_name='cleanup_records')
     flatmate = models.ForeignKey(Flatmate, on_delete=models.CASCADE, related_name='flatmate_records')
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, editable=False, blank=False)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=False)
     date = models.DateTimeField(auto_now_add=True)
     to_date = models.DateField()
     realized = models.BooleanField(default=False)

@@ -76,3 +76,10 @@ class RecordDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Record
         fields = '__all__'
+
+
+class CreateRecordSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Record
+        fields=['flat', 'room', 'flatmate', 'cleanup', 'author', 'to_date']
